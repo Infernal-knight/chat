@@ -22,7 +22,10 @@
         "sonata-project/admin-bundle": "~2.3",
         "sonata-project/easy-extends-bundle": "~2.1",
         "sonata-project/user-bundle": "~2.2",
-        "sonata-project/seo-bundle": "~1.1"
+        "sonata-project/seo-bundle": "~1.1",
+        "sonata-project/notification-bundle": "~2.3",
+        "sonata-project/cache-bundle": "~2.2",
+        "sonata-project/page-bundle": "~2.3"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
