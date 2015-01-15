@@ -69,12 +69,71 @@ swiftmailer:
 
 
 sonata_block:
-    default_contexts: [cms]
+    default_contexts: [cms, sonata_page_bundle]
+    context_manager: sonata.page.block.context_manager
     blocks:
         sonata.admin.block.admin_list:
             contexts:   [admin]
+        sonata.admin.block.search_result:
+            contexts:   [admin]
         sonata.user.block.menu:    # used to display the menu in profile pages
         sonata.user.block.account: # used to display menu option (login option)
+
+        sonata.admin_doctrine_orm.block.audit:
+            contexts:   [admin]
+
+        sonata.block.service.text:
+        sonata.block.service.rss:
+
+        # Some specific block from the SonataMediaBundle
+        sonata.media.block.media:
+        sonata.media.block.gallery:
+        sonata.media.block.feature_media:
+
+        # Builtin Block
+        sonata.block.service.text:
+        sonata.block.service.container:
+        sonata.block.service.rss:
+        sonata.block.service.menu:
+        sonata.block.service.template:
+
+        # PageBundle's Blocks
+        sonata.page.block.container:
+            # cache: sonata.cache.memcached
+            # cache: sonata.cache.predis
+            # cache: sonata.page.cache.esi # if you are using the PageBundle
+            # cache: sonata.block.cache.esi # if you are using the BlockBundle without the PageBundle
+        sonata.page.block.children_pages:
+        sonata.page.block.breadcrumb:
+
+
+        # UserBundle's Blocks
+        sonata.user.block.account:
+            cache: sonata.page.cache.js_async
+            #cache: sonata.page.cache.esi
+            contexts: [user]
+        sonata.user.block.menu:
+            contexts: [user]
+
+        # SeoBundle's Blocks
+        sonata.seo.block.email.share_button:
+        sonata.seo.block.facebook.like_box:
+        sonata.seo.block.facebook.like_button:
+        sonata.seo.block.facebook.send_button:
+        sonata.seo.block.facebook.share_button:
+        sonata.seo.block.pinterest.pin_button:
+        sonata.seo.block.twitter.share_button:
+        sonata.seo.block.twitter.follow_button:
+        sonata.seo.block.twitter.hashtag_button:
+        sonata.seo.block.twitter.mention_button:
+        sonata.seo.block.twitter.embed:
+
+        # Formatter
+        # sonata.formatter.block.formatter:
+
+        sonata.seo.block.breadcrumb.homepage:
+
+
 sonata_user:
     security_acl: true
     manager_type: orm # can be orm or mongodb
@@ -198,15 +257,77 @@ sonata_page:
     page_defaults:
         homepage: {decorate: false} # disable decoration for homepage, key - is a page route
 
-    default_template: default # template key from templates section, used as default for pages
-    templates:
-        default: {path: 'SonataPageBundle::layout.html.twig', name: default }
+    #default_template: default # template key from templates section, used as default for pages
+    #templates:
+    #    default: {path: 'SonataPageBundle::layout.html.twig', name: default }
 
     # manage the http errors
     catch_exceptions:
         not_found: [404]    # render 404 page with "not_found" key (name generated: _page_internal_error_{key})
         fatal:     [500]    # so you can use the same page for different http errors or specify specific page for each error
-        
+
+    default_template: default
+    templates:
+        default:
+            path: 'SonataPageBundle::layout.html.twig'
+            name: 'default'
+            containers:
+                 header:
+                     name: Header
+                 content_top:
+                     name: Top content
+                 content:
+                     name: Main content
+                 content_bottom:
+                     name: Bottom content
+                 footer:
+                     name: Footer
+            matrix:
+                 layout: |
+                     HHHHHHHH
+                     TTTTTTTT
+                     CCCCCCCC
+                     BBBBBBBB
+                     FFFFFFFF
+
+                 mapping:
+                     H: header
+                     T: content_top
+                     C: content
+                     B: content_bottom
+                     F: footer
+
+        2columns:
+            path: 'SonataPageBundle::2columns_layout.html.twig'
+            name: '2 columns layout'
+            containers:
+                 header:
+                     name: Header
+                 content_top:
+                     name: Top content
+                 left_col:
+                     name: Left content
+                 right_col:
+                     name: Right content
+                 content_bottom:
+                     name: Bottom content
+                 footer:
+                     name: Footer
+            matrix:
+                 layout: |
+                     HHHHHHHH
+                     TTTTTTTT
+                     LLLLRRRR
+                     BBBBBBBB
+                     FFFFFFFF
+
+                 mapping:
+                     H: header
+                     T: content_top
+                     L: left_col
+                     R: right_col
+                     B: content_bottom
+                     F: footer
 
 sonata_media:
     # if you don't use default namespace configuration

@@ -32,7 +32,8 @@
         "sonata-project/page-bundle": "~2.3.8",
         "sonata-project/classification-bundle": "~2.2",
         "jms/serializer-bundle": "0.13.*",
-        "sonata-project/media-bundle": "~2.3"
+        "sonata-project/media-bundle": "~2.3",
+        "sonata-project/block-bundle": "~2.3@dev"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
