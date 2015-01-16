@@ -40,7 +40,7 @@ class AppKernel extends Kernel
             new Sonata\IntlBundle\SonataIntlBundle(),
             new Sonata\MediaBundle\SonataMediaBundle(),
             new Application\Sonata\MediaBundle\ApplicationSonataMediaBundle(),
-
+            new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
 
             new AppBundle\AppBundle(),
         );
