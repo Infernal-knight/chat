@@ -2,3 +2,9 @@ services:
 #    app.example:
 #        class: AppBundle\Example
 #        arguments: [@service_id, "plain_value", %parameter%]
+
+    app.block.user_login:
+        class: AppBundle\Block\UserLoginBlock
+        arguments: ['app.block.user_login', @templating]
+        tags: [{ name: sonata.block }]
+        calls: [ [ setContainer, [ @service_container ] ] ]

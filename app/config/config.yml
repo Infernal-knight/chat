@@ -133,6 +133,9 @@ sonata_block:
 
         sonata.seo.block.breadcrumb.homepage:
 
+        #our blocks
+        app.block.user_login:
+
 
 sonata_user:
     security_acl: true
