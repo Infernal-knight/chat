@@ -1,8 +1,10 @@
 <?php
+
 namespace AppBundle\Entity;
+
 use Application\Sonata\UserBundle\Entity\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
+
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\UserRepository")

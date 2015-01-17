@@ -5,16 +5,30 @@ namespace AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sonata\UserBundle\Model\UserInterface;
+use Symfony\Component\HttpFoundation\Request;
+
 
 class DefaultController extends Controller
 {
     /**
-     * @Route("/ttt")
-     * @Template("AppBundle:Default:index.html.twig")
+     * @Route("/chat")
+     * @Template("AppBundle:Default:chat.html.twig")
      */
-    public function indexAction()
+    public function chatAction(Request $request)
     {
-        $name = 'www';
-        return array('name' => $name);
+        $user = $this->container->get('security.context')->getToken()->getUser();
+        $isLoggedIn = $user instanceof UserInterface;
+
+        if ($isLoggedIn) {
+            $session = $this->container->get('session');
+            $session->set('userId', $user->getId());
+        }
+
+
+        return array(
+            'isLoggedIn' => $isLoggedIn,
+            'host' => $request->getHost(),
+        );
     }
 }

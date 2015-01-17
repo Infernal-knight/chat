@@ -13,4 +13,7 @@ services:
         class: "AppBundle\Service\FOSUBUserProvider"
         #this is the place where the properties are passed to the UserProvider - see config.yml
         arguments: [@fos_user.user_manager, {vkontakte: vkontakte_id}]
-        
+
+    app.topic.chat:
+        class: AppBundle\Service\ChatTopic
+        calls: [ [ setContainer, [ @service_container ] ] ]

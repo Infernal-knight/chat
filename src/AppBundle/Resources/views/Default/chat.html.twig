@@ -1,0 +1,42 @@
+{{ sonata_block_render({ 'type': 'app.block.user_login' }) }}
+{% if not isLoggedIn %}
+    <a href="{{ path('hwi_oauth_service_redirect', {'service': 'vkontakte' }) }}" alt="Sign in with VK">Sign in with VK</a>
+{% else %}
+
+    <div id="chat"></div>
+    <div><input type="text" id="input"> <button id="submit">&rarr;</button></div>
+    <script type="text/javascript">
+        AUTOBAHN_DEBUG = true;
+    </script>
+
+    {{ clank_client() }}
+    <script type="text/javascript">
+
+        var chat = Clank.connect("ws://{{ host }}:8080");
+
+        chat.on('socket/connect', function(session){
+            //console.log('Successfully Connected!');
+
+
+            session.subscribe('chat', function(uri, payload){
+                console.log('Received:', payload);
+                if (payload.event && payload.event.msg) {
+                    $('#chat').append('<b>' + payload.event.sender + ':</b>' + payload.event.msg + '<br />');
+                }
+            });
+
+            $('#submit').click(function(){
+                $input = $('#input');
+                session.publish('chat', {msg: $input.val()});
+                $input.val('');
+            });
+
+
+        });
+
+        chat.on("socket/disconnect", function(error){
+            //console.log("Disconnected for " + error.reason + " with code " + error.code);
+        });
+
+    </script>
+{% endif %}
