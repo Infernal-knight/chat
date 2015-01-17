@@ -142,7 +142,7 @@ sonata_user:
 fos_user:
     db_driver:      orm # can be orm or odm
     firewall_name:  main
-    user_class:     Application\Sonata\UserBundle\Entity\User
+    user_class:     AppBundle\Entity\User
 
 
     group:
@@ -358,3 +358,12 @@ sonata_media:
             directory:  %kernel.root_dir%/../web/uploads/media
             create:     false
             
+hwi_oauth:
+    # name of the firewall in which this bundle is active, this setting MUST be set
+    firewall_name: main
+    resource_owners:
+        vkontakte:
+            type:                vkontakte
+            client_id:           4363844
+            client_secret:       KkyRwNy4rIshEWGQNX31
+            scope:               "email"

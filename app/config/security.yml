@@ -19,7 +19,8 @@ security:
 
     providers:
         fos_userbundle:
-            id: fos_user.user_manager
+            #id: fos_user.user_manager
+            id: fos_user.user_provider.username_email
     acl:
         connection: default
 
@@ -58,6 +59,14 @@ security:
                 use_forward:    false
                 check_path:     /login_check
                 failure_path:   null
+            oauth:
+                resource_owners:
+                    vkontakte:     "/login/check-vk"
+                login_path:        /login
+                use_forward:       false
+                failure_path:      /login
+                oauth_user_provider:
+                    service: oauth_user_provider
             logout:             true
             anonymous:          true
 
