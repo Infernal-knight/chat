@@ -54,6 +54,10 @@ sonata_page_exceptions:
     resource: '@SonataPageBundle/Resources/config/routing/exceptions.xml'
     prefix: /page
 
+sonata_page_page:
+    resource: '@SonataPageBundle/Resources/config/routing/page.xml'
+    prefix: /
+       
 hwi_oauth_redirect:
     resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
     prefix:   /login
