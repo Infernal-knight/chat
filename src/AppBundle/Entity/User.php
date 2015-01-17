@@ -29,6 +29,11 @@ class User extends BaseUser
      */
     protected $vkontakte_access_token;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Message", mappedBy="sender")
+     */
+    protected $messages;
+
 
     /**
      * Get id
@@ -84,5 +89,45 @@ class User extends BaseUser
     public function getVkontakteAccessToken()
     {
         return $this->vkontakte_access_token;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->messages = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add messages
+     *
+     * @param \AppBundle\Entity\Message $messages
+     * @return User
+     */
+    public function addMessage(\AppBundle\Entity\Message $messages)
+    {
+        $this->messages[] = $messages;
+
+        return $this;
+    }
+
+    /**
+     * Remove messages
+     *
+     * @param \AppBundle\Entity\Message $messages
+     */
+    public function removeMessage(\AppBundle\Entity\Message $messages)
+    {
+        $this->messages->removeElement($messages);
+    }
+
+    /**
+     * Get messages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMessages()
+    {
+        return $this->messages;
     }
 }

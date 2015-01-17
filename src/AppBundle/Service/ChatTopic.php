@@ -4,23 +4,10 @@ namespace AppBundle\Service;
 
 use JDare\ClankBundle\Topic\TopicInterface;
 use Ratchet\ConnectionInterface as Conn;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use AppBundle\Entity\Message;
 
-class ChatTopic implements TopicInterface, ContainerAwareInterface
+class ChatTopic extends ContainerAwareService implements TopicInterface
 {
-    protected $container;
-
-    public function getContainer()
-    {
-        return $this->container;
-    }
-
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
     /**
      * This will receive any Subscription requests for this topic.
      *
@@ -30,11 +17,6 @@ class ChatTopic implements TopicInterface, ContainerAwareInterface
      */
     public function onSubscribe(Conn $conn, $topic)
     {
-        //todo move to connection event
-        $userId = $conn->Session->get('userId');
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $user = $em->getRepository('AppBundle:User')->find($userId);
-        $conn->User = $user;
         //this will broadcast the message to ALL subscribers of this topic.
         //$topic->broadcast($conn->resourceId . " has joined " . $topic->getId());
     }
@@ -65,13 +47,34 @@ class ChatTopic implements TopicInterface, ContainerAwareInterface
      */
     public function onPublish(Conn $conn, $topic, $event, array $exclude, array $eligible)
     {
-        $event['sender'] = $conn->User->getUsername();
-        //todo add message saving
-        $topic->broadcast(array(
-            "sender" => $conn->resourceId,
-            "topic" => $topic->getId(),
-            "event" => $event
-        ));
+        switch ($event['action']) {
+            case 'messageNew':
+
+                $em = $this->getContainer()->get('doctrine')->getManager();
+
+                $messageProcessor = $this->getContainer()->get('app.message.processor');
+                $message = $messageProcessor->process($event['params']['message'], $conn->User->getUsername());
+
+                $messageEntity = new Message();
+                $messageEntity->setSender($conn->User);
+                $messageEntity->setCreated(new \DateTime());
+                $messageEntity->setText($message);
+
+                $em->persist($messageEntity);
+                $em->flush();
+
+                //todo add message saving
+                $topic->broadcast(array(
+                    "action" => "messageNew",
+                    "params" => array('message' => $message),
+                ));
+                break;
+
+            default:
+                break;
+        }
+
+
     }
 
 }

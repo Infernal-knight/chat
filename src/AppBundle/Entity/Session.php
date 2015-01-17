@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\SessionRepository")
- * @ORM\Table(name="sessions")
+ * @ORM\Table(name="sessions", options={"engine"="MyISAM"})
  */
 class Session
 {

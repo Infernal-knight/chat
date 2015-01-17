@@ -29,6 +29,11 @@ class User extends BaseUser
      */
     protected $vkontakte_access_token;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Message", mappedBy="sender")
+     */
+    protected $messages;
+
 
     /**
      * Get id
