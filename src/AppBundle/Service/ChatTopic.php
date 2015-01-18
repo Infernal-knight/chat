@@ -62,7 +62,7 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
 
                 $messageProcessor = $this->getContainer()->get('app.message.processor');
                 $message = $messageProcessor->process($event['params']['message']);
-                $message = $chatDecorator->decorateMessage($conn->User, $message);
+
 
                 $messageEntity = new Message();
                 $messageEntity->setSender($conn->User);
@@ -71,6 +71,8 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
 
                 $em->persist($messageEntity);
                 $em->flush();
+
+                $message = $chatDecorator->decorateMessage($conn->User, $message);
 
                 $topic->broadcast(array(
                     'action' => 'messageNew',

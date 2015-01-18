@@ -15,6 +15,8 @@ class MessageRepository extends EntityRepository
     public function getMessagesFrom($date)
     {
         $query = $this->createQueryBuilder('m')
+            ->select('m, s')
+            ->join('m.sender', 's')
             ->where('m.created >= :date')
             ->setParameter('date', $date)
             ->orderBy('m.created', 'ASC')

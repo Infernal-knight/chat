@@ -22,11 +22,17 @@ class DefaultController extends Controller
 
         $messages = array();
 
+        $chatDecorator = $this->container->get('app.decorator.chat');
+
         if ($isLoggedIn) {
             $session = $this->container->get('session');
             $session->set('userId', $user->getId());
             $messageRepository = $this->container->get('doctrine')->getManager()->getRepository('AppBundle:Message');
-            $messages = $messageRepository->getMessagesFrom(new \DateTime('-1 day'));
+
+            foreach ($messageRepository->getMessagesFrom(new \DateTime('-1 day')) as $message) {
+                $messages[] = $chatDecorator->decorateMessage($message->getSender(), $message->getText());
+            }
+
         }
 
 

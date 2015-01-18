@@ -5,7 +5,7 @@
     <div id="users"></div>
     <div id="chat">
         {% for message in messages %}
-            {{ message.text | raw }}
+            {{ message | raw }}
         {% endfor %}
     </div>
     <div><input type="text" id="input"> <button id="submit">&rarr;</button></div>
