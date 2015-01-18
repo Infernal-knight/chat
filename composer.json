@@ -46,7 +46,8 @@
         "knplabs/knp-menu-bundle": "~1.1",
         "mopa/bootstrap-bundle": "~2.3",
         "twbs/bootstrap": "~3.3",
-        "jdare/clank-bundle": "dev-master"
+        "jdare/clank-bundle": "dev-master",
+        "knplabs/knp-markdown-bundle": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

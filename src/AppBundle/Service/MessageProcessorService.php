@@ -2,7 +2,7 @@
 
 namespace AppBundle\Service;
 
-class MessageProcessorService
+class MessageProcessorService extends ContainerAwareService
 {
     protected static $IMG_EXTS = array('gif', 'jpg', 'jpeg', 'png');
 
@@ -11,7 +11,9 @@ class MessageProcessorService
 
         $message = strip_tags($message);
         $message = $this->urlify($message);
-
+        $message = $this->getContainer()->get('markdown.parser')->transformMarkdown($message);
+        //removing paragraphs after markdown
+        //$message = str_replace(array('<p>','</p>'),'',$message);
         return $message;
     }
 

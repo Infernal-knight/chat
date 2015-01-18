@@ -41,10 +41,11 @@ class AppKernel extends Kernel
             new Sonata\MediaBundle\SonataMediaBundle(),
             new Application\Sonata\MediaBundle\ApplicationSonataMediaBundle(),
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
-            new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
 
             new JDare\ClankBundle\JDareClankBundle(),
+            new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
+            new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
 
             new AppBundle\AppBundle(),
         );

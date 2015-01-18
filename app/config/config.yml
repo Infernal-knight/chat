@@ -396,3 +396,7 @@ clank:
         -
             name: "chat" #Important! this is the topic namespace used to match to this service!
             service: "app.topic.chat" #The service id.
+
+knp_markdown:
+    parser:
+        service: app.markdown.parser

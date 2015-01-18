@@ -26,6 +26,11 @@ services:
 
     app.message.processor:
         class: AppBundle\Service\MessageProcessorService
+        calls: [ [ setContainer, [ @service_container ] ] ]
 
     app.decorator.chat:
         class: AppBundle\Service\ChatDecoratorService
+
+    app.markdown.parser:
+        class: AppBundle\Service\MarkdownParserService
+        
