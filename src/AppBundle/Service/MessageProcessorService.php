@@ -2,7 +2,9 @@
 
 namespace AppBundle\Service;
 
-class MessageProcessorService extends ContainerAwareService
+use Symfony\Component\DependencyInjection\ContainerAware;
+
+class MessageProcessorService extends ContainerAware
 {
     protected static $IMG_EXTS = array('gif', 'jpg', 'jpeg', 'png');
 
@@ -11,7 +13,7 @@ class MessageProcessorService extends ContainerAwareService
 
         $message = strip_tags($message);
         $message = $this->urlify($message);
-        $message = $this->getContainer()->get('markdown.parser')->transformMarkdown($message);
+        $message = $this->container->get('markdown.parser')->transformMarkdown($message);
         //removing paragraphs after markdown
         //$message = str_replace(array('<p>','</p>'),'',$message);
         return $message;

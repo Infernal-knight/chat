@@ -2,8 +2,9 @@
 namespace AppBundle\Service;
 
 use JDare\ClankBundle\Event\ClientEvent;
+use Symfony\Component\DependencyInjection\ContainerAware;
 
-class WebsocketEventListener extends ContainerAwareService
+class WebsocketEventListener extends ContainerAware
 {
     /**
      * Called whenever a client connects
@@ -15,7 +16,7 @@ class WebsocketEventListener extends ContainerAwareService
         $conn = $event->getConnection();
 
         $userId = $conn->Session->get('userId');
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em = $this->container->get('doctrine')->getManager();
         $user = $em->getRepository('AppBundle:User')->find($userId);
 
         $conn->User = $user;

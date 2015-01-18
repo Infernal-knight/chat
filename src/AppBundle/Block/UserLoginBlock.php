@@ -17,7 +17,7 @@ class UserLoginBlock extends ContainerAwareBlock
 
         $isLoggedIn = $user instanceof UserInterface;
 
-        $csrfToken = $this->getContainer()->get('form.csrf_provider')->generateCsrfToken('authenticate');
+        $csrfToken = $this->container->get('form.csrf_provider')->generateCsrfToken('authenticate');
 
         return $this->renderResponse('AppBundle:Default\\Block:user_login.html.twig', array(
             'block'     => $blockContext->getBlock(),

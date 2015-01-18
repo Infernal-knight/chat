@@ -5,8 +5,9 @@ namespace AppBundle\Service;
 use JDare\ClankBundle\Topic\TopicInterface;
 use Ratchet\ConnectionInterface as Conn;
 use AppBundle\Entity\Message;
+use Symfony\Component\DependencyInjection\ContainerAware;
 
-class ChatTopic extends ContainerAwareService implements TopicInterface
+class ChatTopic extends ContainerAware implements TopicInterface
 {
     /**
      * This will receive any Subscription requests for this topic.
@@ -17,7 +18,7 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
      */
     public function onSubscribe(Conn $conn, $topic)
     {
-        $chatDecorator = $this->getContainer()->get('app.decorator.chat');
+        $chatDecorator = $this->container->get('app.decorator.chat');
 
         $topic->broadcast(array(
             'action' => 'userAdd',
@@ -53,14 +54,14 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
      */
     public function onPublish(Conn $conn, $topic, $event, array $exclude, array $eligible)
     {
-        $chatDecorator = $this->getContainer()->get('app.decorator.chat');
+        $chatDecorator = $this->container->get('app.decorator.chat');
 
         switch ($event['action']) {
             case 'messageNew':
 
-                $em = $this->getContainer()->get('doctrine')->getManager();
+                $em = $this->container->get('doctrine')->getManager();
 
-                $messageProcessor = $this->getContainer()->get('app.message.processor');
+                $messageProcessor = $this->container->get('app.message.processor');
                 $message = $messageProcessor->process($event['params']['message']);
 
                 $messageEntity = new Message();
@@ -81,7 +82,7 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
 
             case 'messagePrivate':
 
-                $em = $this->getContainer()->get('doctrine')->getManager();
+                $em = $this->container->get('doctrine')->getManager();
 
                 $receiverConnection = null;
                 foreach ($topic->getIterator() as $connection) {
@@ -96,7 +97,7 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
                     break;
                 }
 
-                $messageProcessor = $this->getContainer()->get('app.message.processor');
+                $messageProcessor = $this->container->get('app.message.processor');
                 $message = $messageProcessor->process($event['params']['message']);
 
                 $messageEntity = new Message();
