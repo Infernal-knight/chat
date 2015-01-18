@@ -12,13 +12,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class MessageRepository extends EntityRepository
 {
-    public function getMessagesFrom($date)
+    public function getMessagesFrom($date, $user)
     {
         $query = $this->createQueryBuilder('m')
-            ->select('m, s')
+            ->select('m, s, r')
             ->join('m.sender', 's')
+            ->leftJoin('m.receiver', 'r')
             ->where('m.created >= :date')
+            ->andWhere('m.sender = :user OR m.receiver = :user OR m.receiver IS NULL')
             ->setParameter('date', $date)
+            ->setParameter('user', $user)
             ->orderBy('m.created', 'ASC')
             ->getQuery();
 

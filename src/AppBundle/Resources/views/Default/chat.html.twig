@@ -8,7 +8,7 @@
             {{ message | raw }}
         {% endfor %}
     </div>
-    <div><input type="text" id="input"> <button id="submit">&rarr;</button></div>
+    <div><span id="private" style="display: none;">To: <span id="privateTo" data-uid=""></span> <span id="privateCancel">X</span> </span><input type="text" id="input"> <button id="submit">&rarr;</button></div>
 
     {{ clank_client() }}
     <script type="text/javascript">
@@ -21,6 +21,7 @@
                 //console.log('Received:', payload);
 
                 switch (payload.action) {
+                    case 'messagePrivate':
                     case 'messageNew':
                         $('#chat').append(payload.params.message);
                         break;
@@ -34,7 +35,7 @@
                         break;
 
                     case 'userRemove':
-                        $('#uid'+payload.params.userId).remove();
+                        $($("[data-uid='" + payload.params.userId + "']")[0]).remove();
                         break;
 
                     default:
@@ -46,8 +47,16 @@
 
             var sendFunction = function () {
                 $input = $('#input');
+                $privateTo = $('#privateTo');
                 if ($input.val()) {
-                    session.publish('chat', {action: 'messageNew', params: { message: $input.val() } });
+                    if ($privateTo.data('uid')) {
+                        session.publish('chat', {action: 'messagePrivate', params: { message: $input.val(), receiver: $privateTo.data('uid') } });
+                        $privateTo.text('');
+                        $privateTo.data('uid', '');
+                        $('#private').hide();
+                    } else {
+                        session.publish('chat', {action: 'messageNew', params: { message: $input.val() } });
+                    }
                     $input.val('');
                 }
             }
@@ -60,8 +69,20 @@
                 }
             });
 
+            $('#users').on('click', '.uid', function () {
+                $this = $(this);
+                $('#private').show();
+                $privateTo = $('#privateTo');
+                $privateTo.text($this.text());
+                $privateTo.data('uid', $this.data('uid'));
+            });
 
-
+            $('#privateCancel').click(function () {
+                $privateTo = $('#privateTo');
+                $privateTo.text('');
+                $privateTo.data('uid', '');
+                $('#private').hide();
+            });
         });
 
         chat.on("socket/disconnect", function(error){

@@ -23,6 +23,11 @@ class Message
     protected $sender;
 
     /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="privates")
+     */
+    protected $receiver;
+
+    /**
      * @ORM\Column(type="datetime")
      */
     protected $created;
@@ -110,5 +115,28 @@ class Message
     public function getSender()
     {
         return $this->sender;
+    }
+
+    /**
+     * Set receiver
+     *
+     * @param \AppBundle\Entity\User $receiver
+     * @return Message
+     */
+    public function setReceiver(\AppBundle\Entity\User $receiver = null)
+    {
+        $this->receiver = $receiver;
+
+        return $this;
+    }
+
+    /**
+     * Get receiver
+     *
+     * @return \AppBundle\Entity\User 
+     */
+    public function getReceiver()
+    {
+        return $this->receiver;
     }
 }

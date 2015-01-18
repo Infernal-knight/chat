@@ -34,6 +34,12 @@ class User extends BaseUser
      */
     protected $messages;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Message", mappedBy="receiver")
+     */
+    protected $privates;
+
+
 
     /**
      * Get id
@@ -138,4 +144,37 @@ class User extends BaseUser
         }
     }
 
+
+    /**
+     * Add privates
+     *
+     * @param \AppBundle\Entity\Message $privates
+     * @return User
+     */
+    public function addPrivate(\AppBundle\Entity\Message $privates)
+    {
+        $this->privates[] = $privates;
+
+        return $this;
+    }
+
+    /**
+     * Remove privates
+     *
+     * @param \AppBundle\Entity\Message $privates
+     */
+    public function removePrivate(\AppBundle\Entity\Message $privates)
+    {
+        $this->privates->removeElement($privates);
+    }
+
+    /**
+     * Get privates
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPrivates()
+    {
+        return $this->privates;
+    }
 }

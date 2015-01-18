@@ -12,10 +12,17 @@ class ChatDecoratorService
         return '<i>'.$username.':</i> '.$message.'<br />';
     }
 
+    public function decorateMessagePrivate(User $userFrom, User $userTo, $message)
+    {
+        $usernameFrom = $this->getUsername($userFrom);
+        $usernameTo = $this->getUsername($userTo);
+        return '<i>'.$usernameFrom.' &rarr; '.$usernameTo.':</i> '.$message.'<br />';
+    }
+
     public function decorateUser(User $user)
     {
         $username = $this->getUsername($user);
-        return '<span id="uid'.$user->getId().'">'.$username.'</span> ';
+        return '<span class="uid" data-uid="'.$user->getId().'">'.$username.'</span> ';
     }
 
     protected function getUsername(User $user)

@@ -29,8 +29,12 @@ class DefaultController extends Controller
             $session->set('userId', $user->getId());
             $messageRepository = $this->container->get('doctrine')->getManager()->getRepository('AppBundle:Message');
 
-            foreach ($messageRepository->getMessagesFrom(new \DateTime('-1 day')) as $message) {
-                $messages[] = $chatDecorator->decorateMessage($message->getSender(), $message->getText());
+            foreach ($messageRepository->getMessagesFrom(new \DateTime('-1 day'), $user) as $message) {
+                if ($message->getReceiver()) {
+                    $messages[] = $chatDecorator->decorateMessagePrivate($message->getSender(), $message->getReceiver(), $message->getText());
+                } else {
+                    $messages[] = $chatDecorator->decorateMessage($message->getSender(), $message->getText());
+                }
             }
 
         }

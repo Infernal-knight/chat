@@ -63,7 +63,6 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
                 $messageProcessor = $this->getContainer()->get('app.message.processor');
                 $message = $messageProcessor->process($event['params']['message']);
 
-
                 $messageEntity = new Message();
                 $messageEntity->setSender($conn->User);
                 $messageEntity->setCreated(new \DateTime());
@@ -78,6 +77,51 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
                     'action' => 'messageNew',
                     'params' => array('message' => $message),
                 ));
+                break;
+
+            case 'messagePrivate':
+
+                $em = $this->getContainer()->get('doctrine')->getManager();
+
+                $receiverConnection = null;
+                foreach ($topic->getIterator() as $connection) {
+                    if ($connection->User->getId() == $event['params']['receiver']) {
+                        $receiverConnection = $connection;
+                        break;
+                    }
+                }
+
+                if (!$receiverConnection) {
+                    echo 'Tried to send private message to an unexisting user...'.PHP_EOL;
+                    break;
+                }
+
+                $messageProcessor = $this->getContainer()->get('app.message.processor');
+                $message = $messageProcessor->process($event['params']['message']);
+
+                $messageEntity = new Message();
+                $messageEntity->setSender($conn->User);
+                $messageEntity->setReceiver($receiverConnection->User);
+                $messageEntity->setCreated(new \DateTime());
+                $messageEntity->setText($message);
+
+                $em->persist($messageEntity);
+                $em->flush();
+
+                $message = $chatDecorator->decorateMessagePrivate($conn->User, $receiverConnection->User, $message);
+
+                $receiverConnection->event($topic->getId(), array(
+                    'action' => 'messagePrivate',
+                    'params' => array('message' => $message),
+                ));
+
+                if ($conn->User->getId() != $receiverConnection->User->getId()) {
+                    $conn->event($topic->getId(), array(
+                        'action' => 'messagePrivate',
+                        'params' => array('message' => $message),
+                    ));
+                }
+
                 break;
 
             case 'userList':
