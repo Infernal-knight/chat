@@ -2,16 +2,13 @@
 {% if not isLoggedIn %}
     <a href="{{ path('hwi_oauth_service_redirect', {'service': 'vkontakte' }) }}" alt="Sign in with VK">Sign in with VK</a>
 {% else %}
-
+    <div id="users"></div>
     <div id="chat">
         {% for message in messages %}
             {{ message.text | raw }}
         {% endfor %}
     </div>
     <div><input type="text" id="input"> <button id="submit">&rarr;</button></div>
-    <script type="text/javascript">
-        AUTOBAHN_DEBUG = true;
-    </script>
 
     {{ clank_client() }}
     <script type="text/javascript">
@@ -21,25 +18,48 @@
         chat.on('socket/connect', function(session){
 
             session.subscribe('chat', function(uri, payload){
-                console.log('Received:', payload);
+                //console.log('Received:', payload);
 
                 switch (payload.action) {
                     case 'messageNew':
                         $('#chat').append(payload.params.message);
                         break;
 
+                    case 'userList':
+                        $('#users').html(payload.params.userList);
+                        break;
+
+                    case 'userAdd':
+                        $('#users').append(payload.params.user);
+                        break;
+
+                    case 'userRemove':
+                        $('#uid'+payload.params.userId).remove();
+                        break;
+
                     default:
                         break;
                 }
-
-
             });
 
-            $('#submit').click(function(){
+            session.publish('chat', {action: 'userList'});
+
+            var sendFunction = function () {
                 $input = $('#input');
-                session.publish('chat', {action: 'messageNew', params: { message: $input.val() } });
-                $input.val('');
+                if ($input.val()) {
+                    session.publish('chat', {action: 'messageNew', params: { message: $input.val() } });
+                    $input.val('');
+                }
+            }
+
+            $('#submit').click(sendFunction);
+            $('#input').keypress(function(event) {
+                if (event.which == 13) {
+                    event.preventDefault();
+                    sendFunction();
+                }
             });
+
 
 
         });

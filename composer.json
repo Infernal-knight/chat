@@ -9,6 +9,12 @@
             "SymfonyStandard": "app/"
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/AetherFox/ClankBundle"
+        }
+    ],
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": "2.6.*",
@@ -40,7 +46,7 @@
         "knplabs/knp-menu-bundle": "~1.1",
         "mopa/bootstrap-bundle": "~2.3",
         "twbs/bootstrap": "~3.3",
-        "jdare/clank-bundle": "0.1.*"
+        "jdare/clank-bundle": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

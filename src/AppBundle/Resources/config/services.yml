@@ -20,9 +20,12 @@ services:
 
     app.listener.websocket:
         class: AppBundle\Service\WebsocketEventListener
-        tags: [{ name: kernel.event_listener, event: clank.client.connected, method: onClientConnect }]
+        tags:
+          - { name: kernel.event_listener, event: clank.client.connected, method: onClientConnect }
         calls: [ [ setContainer, [ @service_container ] ] ]
 
     app.message.processor:
         class: AppBundle\Service\MessageProcessorService
 
+    app.decorator.chat:
+        class: AppBundle\Service\ChatDecoratorService

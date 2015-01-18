@@ -20,5 +20,4 @@ class WebsocketEventListener extends ContainerAwareService
 
         $conn->User = $user;
     }
-
 }

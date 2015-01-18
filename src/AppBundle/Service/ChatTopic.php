@@ -17,8 +17,12 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
      */
     public function onSubscribe(Conn $conn, $topic)
     {
-        //this will broadcast the message to ALL subscribers of this topic.
-        //$topic->broadcast($conn->resourceId . " has joined " . $topic->getId());
+        $chatDecorator = $this->getContainer()->get('app.decorator.chat');
+
+        $topic->broadcast(array(
+            'action' => 'userAdd',
+            'params' => array('user' => $chatDecorator->decorateUser($conn->User)),
+        ));
     }
 
     /**
@@ -30,8 +34,10 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
      */
     public function onUnSubscribe(Conn $conn, $topic)
     {
-        //this will broadcast the message to ALL subscribers of this topic.
-        //$topic->broadcast($conn->resourceId . " has left " . $topic->getId());
+        $topic->broadcast(array(
+            'action' => 'userRemove',
+            'params' => array('userId' => $conn->User->getId()),
+        ));
     }
 
 
@@ -47,13 +53,16 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
      */
     public function onPublish(Conn $conn, $topic, $event, array $exclude, array $eligible)
     {
+        $chatDecorator = $this->getContainer()->get('app.decorator.chat');
+
         switch ($event['action']) {
             case 'messageNew':
 
                 $em = $this->getContainer()->get('doctrine')->getManager();
 
                 $messageProcessor = $this->getContainer()->get('app.message.processor');
-                $message = $messageProcessor->process($event['params']['message'], $conn->User->getUsername());
+                $message = $messageProcessor->process($event['params']['message']);
+                $message = $chatDecorator->decorateMessage($conn->User, $message);
 
                 $messageEntity = new Message();
                 $messageEntity->setSender($conn->User);
@@ -63,10 +72,21 @@ class ChatTopic extends ContainerAwareService implements TopicInterface
                 $em->persist($messageEntity);
                 $em->flush();
 
-                //todo add message saving
                 $topic->broadcast(array(
-                    "action" => "messageNew",
-                    "params" => array('message' => $message),
+                    'action' => 'messageNew',
+                    'params' => array('message' => $message),
+                ));
+                break;
+
+            case 'userList':
+                $users = '';
+                foreach ($topic->getIterator() as $connection) {
+                    $users[] .= $chatDecorator->decorateUser($connection->User);
+                }
+
+                $conn->event($topic->getId(), array(
+                    'action' => 'userList',
+                    'params' => array('userList' => $users),
                 ));
                 break;
 

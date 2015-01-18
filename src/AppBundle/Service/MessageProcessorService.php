@@ -7,14 +7,12 @@ class MessageProcessorService
     protected static $IMG_EXTS = array('gif', 'jpg', 'jpeg', 'png');
 
 
-    public function process($message, $from) {
+    public function process($message) {
 
         $message = strip_tags($message);
         $message = $this->urlify($message);
 
-
-        $result = '<i>'.$from.':</i> '.$message.'<br />';
-        return $result;
+        return $message;
     }
 
     protected function urlify($text)

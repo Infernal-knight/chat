@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "21c65a32d0b47f9db6afc0f2ad1cf1b3",
+    "hash": "be7aa83d9d160254ef1f89956303aafb",
     "packages": [
         {
             "name": "cboden/ratchet",
@@ -1492,17 +1492,17 @@
         },
         {
             "name": "jdare/clank-bundle",
-            "version": "0.1.6",
+            "version": "dev-master",
             "target-dir": "JDare/ClankBundle",
             "source": {
                 "type": "git",
-                "url": "https://github.com/JDare/ClankBundle.git",
-                "reference": "3661c4583cef2f464ba8f34948ef1a5fdee629f0"
+                "url": "https://github.com/AetherFox/ClankBundle.git",
+                "reference": "c954ff2fc041002c0676a8bb0d455dabce7afb35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JDare/ClankBundle/zipball/3661c4583cef2f464ba8f34948ef1a5fdee629f0",
-                "reference": "3661c4583cef2f464ba8f34948ef1a5fdee629f0",
+                "url": "https://api.github.com/repos/AetherFox/ClankBundle/zipball/c954ff2fc041002c0676a8bb0d455dabce7afb35",
+                "reference": "c954ff2fc041002c0676a8bb0d455dabce7afb35",
                 "shasum": ""
             },
             "require": {
@@ -1516,7 +1516,6 @@
                     "JDare\\ClankBundle": ""
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1531,7 +1530,10 @@
             "keywords": [
                 "Web Socket Application"
             ],
-            "time": "2013-11-23 17:19:59"
+            "support": {
+                "source": "https://github.com/AetherFox/ClankBundle/tree/master"
+            },
+            "time": "2015-01-18 00:55:32"
         },
         {
             "name": "jdorn/sql-formatter",
@@ -4788,7 +4790,8 @@
     "stability-flags": {
         "sonata-project/datagrid-bundle": 20,
         "sonata-project/block-bundle": 20,
-        "hwi/oauth-bundle": 20
+        "hwi/oauth-bundle": 20,
+        "jdare/clank-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

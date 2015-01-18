@@ -26,7 +26,7 @@ class DefaultController extends Controller
             $session = $this->container->get('session');
             $session->set('userId', $user->getId());
             $messageRepository = $this->container->get('doctrine')->getManager()->getRepository('AppBundle:Message');
-            $messages = $messageRepository->getMessagesFrom(new \DateTime('-1 hour'));
+            $messages = $messageRepository->getMessagesFrom(new \DateTime('-1 day'));
         }
 
 
