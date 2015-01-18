@@ -2,15 +2,24 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\User;
+
 class ChatDecoratorService
 {
-    public function decorateMessage($userFrom, $message)
+    public function decorateMessage(User $userFrom, $message)
     {
-        return '<i>'.$userFrom->getUsername().':</i> '.$message.'<br />';
+        $username = $this->getUsername($userFrom);
+        return '<i>'.$username.':</i> '.$message.'<br />';
     }
 
-    public function decorateUser($user)
+    public function decorateUser(User $user)
     {
-        return '<span id="uid'.$user->getId().'">'.$user->getUsername().'</span> ';
+        $username = $this->getUsername($user);
+        return '<span id="uid'.$user->getId().'">'.$username.'</span> ';
+    }
+
+    protected function getUsername(User $user)
+    {
+        return $user->getFullname()!=' '?$user->getFullname():$user->getUsername();
     }
 }

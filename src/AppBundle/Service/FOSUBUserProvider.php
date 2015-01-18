@@ -36,6 +36,7 @@ class FOSUBUserProvider extends BaseClass
     public function loadUserByOAuthUserResponse(UserResponseInterface $response)
     {
         $username = $response->getUsername();
+        /** @var \AppBundle\Entity\User $user */
         $user = $this->userManager->findUserBy(array($this->getProperty($response) => $username));
 //when the user is registrating
         if (null === $user) {
@@ -49,10 +50,20 @@ class FOSUBUserProvider extends BaseClass
             $user->$setter_token($response->getAccessToken());
 //I have set all requested data with the user's username
 //modify here with relevant data
-            $user->setUsername($username);
+
+            $emailArr = explode('@', $response->getEmail());
+            $user->setUsername($emailArr[0]);
             $user->setEmail($response->getEmail());
             $user->setPlainPassword($response->getEmail());
             $user->setEnabled(true);
+            $realname = $response->getRealName();
+            $realname = explode(' ', $realname);
+            $user->setFirstname($realname[1]);
+            $user->setLastname($realname[0]);
+            $user->setSalt(base_convert(sha1(uniqid(mt_rand(), true)), 16, 36));
+            $user->setLocked(false);
+            $user->setExpired(false);
+            $user->setCredentialsExpired(false);
             $this->userManager->updateUser($user);
             return $user;
         }

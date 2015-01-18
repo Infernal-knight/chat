@@ -130,4 +130,12 @@ class User extends BaseUser
     {
         return $this->messages;
     }
+
+    public function setSalt($salt)
+    {
+        if (!$this->salt) {
+            $this->salt = $salt;
+        }
+    }
+
 }
