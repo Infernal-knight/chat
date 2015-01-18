@@ -39,7 +39,10 @@ class User extends BaseUser
      */
     protected $privates;
 
-
+    /**
+     * @ORM\OneToOne(targetEntity="Application\Sonata\MediaBundle\Entity\Media", cascade={"all"})
+     */
+    protected $avatar;
 
     /**
      * Get id
@@ -176,5 +179,28 @@ class User extends BaseUser
     public function getPrivates()
     {
         return $this->privates;
+    }
+
+    /**
+     * Set avatar
+     *
+     * @param \Application\Sonata\MediaBundle\Entity\Media $avatar
+     * @return User
+     */
+    public function setAvatar(\Application\Sonata\MediaBundle\Entity\Media $avatar = null)
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * Get avatar
+     *
+     * @return \Application\Sonata\MediaBundle\Entity\Media 
+     */
+    public function getAvatar()
+    {
+        return $this->avatar;
     }
 }

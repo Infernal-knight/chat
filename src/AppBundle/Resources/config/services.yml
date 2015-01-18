@@ -33,4 +33,9 @@ services:
 
     app.markdown.parser:
         class: AppBundle\Service\MarkdownParserService
-        
+
+    app.form.type.profile:
+        class: AppBundle\Form\Type\ProfileType
+        arguments: [%fos_user.model.user.class%]
+        tags:
+            - { name: form.type, alias: app_profile }
