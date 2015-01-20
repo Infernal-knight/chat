@@ -8,6 +8,11 @@ DirectoryIndex app.php
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    <IfModule mod_proxy_wstunnel.c>
+        #ProxyPass /ws/  ws://localhost:8080/
+        RewriteRule ^/?ws/(.*)$ ws://localhost:8080/$1 [L,P]
+    </IfModule>
+
     # Determine the RewriteBase automatically and set it as environment variable.
     # If you are using Apache aliases to do mass virtual hosting or installed the
     # project in a subdirectory, the base path will be prepended to allow proper

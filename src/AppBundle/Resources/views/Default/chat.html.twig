@@ -26,91 +26,94 @@
             return this;
         };
 
-        var chat = Clank.connect("ws://{{ host }}:8080");
+        $(function () {
+            var chat = Clank.connect("ws://{{ host }}/ws/");
 
-        chat.on('socket/connect', function(session){
-            chat.session = session;
-            session.subscribe('chat', function(uri, payload){
-                //console.log('Received:', payload);
+            chat.on('socket/connect', function(session){
+                chat.session = session;
+                session.subscribe('chat', function(uri, payload){
+                    //console.log('Received:', payload);
 
-                switch (payload.action) {
-                    case 'messagePrivate':
-                    case 'messageNew':
-                        $message = $(payload.params.message);
-                        $chat = $('#chat');
-                        $chat.append($message);
-                        $chat.scrollTo($message);
-                        break;
+                    switch (payload.action) {
+                        case 'messagePrivate':
+                        case 'messageNew':
+                            $message = $(payload.params.message);
+                            $chat = $('#chat');
+                            $chat.append($message);
+                            $chat.scrollTo($message);
+                            break;
 
-                    case 'userList':
-                        $('#users').html(payload.params.userList);
-                        break;
+                        case 'userList':
+                            $('#users').html(payload.params.userList);
+                            break;
 
-                    case 'userAdd':
-                        $('#users').append(payload.params.user);
-                        break;
+                        case 'userAdd':
+                            $('#users').append(payload.params.user);
+                            break;
 
-                    case 'userRemove':
-                        $($("[data-uid='" + payload.params.userId + "']")[0]).remove();
-                        break;
+                        case 'userRemove':
+                            $($("[data-uid='" + payload.params.userId + "']")[0]).remove();
+                            break;
 
-                    default:
-                        break;
+                        default:
+                            break;
+                    }
+                });
+
+                session.publish('chat', {action: 'userList'});
+            });
+
+            var sendFunction = function () {
+                $input = $('#input');
+                $privateTo = $('#privateTo');
+                if ($input.val()) {
+                    if ($privateTo.data('uid')) {
+                        chat.session.publish('chat', {action: 'messagePrivate', params: { message: $input.val(), receiver: $privateTo.data('uid') } });
+                        $privateTo.text('');
+                        $privateTo.data('uid', '');
+                        $('#private').hide();
+                    } else {
+                        chat.session.publish('chat', {action: 'messageNew', params: { message: $input.val() } });
+                    }
+                    $input.val('');
+                }
+            }
+
+            $('#submit').click(sendFunction);
+            $('#input').keypress(function(event) {
+                if (event.which == 13 && event.shiftKey == false) {
+                    event.preventDefault();
+                    sendFunction();
                 }
             });
 
-            session.publish('chat', {action: 'userList'});
-        });
+            $('#users').on('click', '.uid', function () {
+                $this = $(this);
+                $('#private').show();
+                $privateTo = $('#privateTo');
+                $privateTo.text($this.text());
+                $privateTo.data('uid', $this.data('uid'));
+            });
 
-        var sendFunction = function () {
-            $input = $('#input');
-            $privateTo = $('#privateTo');
-            if ($input.val()) {
-                if ($privateTo.data('uid')) {
-                    chat.session.publish('chat', {action: 'messagePrivate', params: { message: $input.val(), receiver: $privateTo.data('uid') } });
-                    $privateTo.text('');
-                    $privateTo.data('uid', '');
-                    $('#private').hide();
-                } else {
-                    chat.session.publish('chat', {action: 'messageNew', params: { message: $input.val() } });
-                }
-                $input.val('');
-            }
-        }
+            $('#privateCancel').click(function () {
+                $privateTo = $('#privateTo');
+                $privateTo.text('');
+                $privateTo.data('uid', '');
+                $('#private').hide();
+            });
 
-        $('#submit').click(sendFunction);
-        $('#input').keypress(function(event) {
-            if (event.which == 13 && event.shiftKey == false) {
-                event.preventDefault();
-                sendFunction();
-            }
-        });
+            $('#chat').scrollTo($('#chat .row:last-child'));
 
-        $('#users').on('click', '.uid', function () {
-            $this = $(this);
-            $('#private').show();
-            $privateTo = $('#privateTo');
-            $privateTo.text($this.text());
-            $privateTo.data('uid', $this.data('uid'));
-        });
+            setInterval(function () {
+                $.get('{{ path('app_default_ping') }}');
+            }, 10*60*1000);
 
-        $('#privateCancel').click(function () {
-            $privateTo = $('#privateTo');
-            $privateTo.text('');
-            $privateTo.data('uid', '');
-            $('#private').hide();
-        });
+            chat.on("socket/disconnect", function(error){
+                alert('Disconnected!');
+                location = location;
+                //console.log("Disconnected for " + error.reason + " with code " + error.code);
+            });
 
-        $('#chat').scrollTo($('#chat .row:last-child'));
-
-        setInterval(function () {
-            $.get('{{ path('app_default_ping') }}');
-        }, 10*60*1000);
-
-        chat.on("socket/disconnect", function(error){
-            alert('Disconnected!');
-            location = location;
-            //console.log("Disconnected for " + error.reason + " with code " + error.code);
         });
 
     </script>
