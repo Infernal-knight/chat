@@ -289,6 +289,8 @@ sonata_page:
 
     ignore_uri_patterns:
         - ^/admin\/   # ignore admin route, ie route containing 'admin'
+        - ^/ping\/
+
 
     page_defaults:
         homepage: {decorate: false} # disable decoration for homepage, key - is a page route
@@ -302,7 +304,8 @@ sonata_page:
         not_found: [404]    # render 404 page with "not_found" key (name generated: _page_internal_error_{key})
         fatal:     [500]    # so you can use the same page for different http errors or specify specific page for each error
 
-    default_template: default
+    default_template: chat
+
     templates:
         default:
             path: 'SonataPageBundle::layout.html.twig'
@@ -332,6 +335,20 @@ sonata_page:
                      C: content
                      B: content_bottom
                      F: footer
+
+        chat:
+            path: 'AppBundle:Default:chat_layout.html.twig'
+            name: 'chat'
+            containers:
+                 content:
+                     name: Main content
+            matrix:
+                 layout: |
+                     CCCCCCCC
+
+                 mapping:
+                     C: content
+
 
         2columns:
             path: 'SonataPageBundle::2columns_layout.html.twig'

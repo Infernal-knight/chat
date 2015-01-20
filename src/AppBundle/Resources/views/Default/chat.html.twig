@@ -1,29 +1,45 @@
-{{ sonata_block_render({ 'type': 'app.block.user_login' }) }}
-{% if not isLoggedIn %}
-    <a href="{{ path('hwi_oauth_service_redirect', {'service': 'vkontakte' }) }}" alt="Sign in with VK">Sign in with VK</a>
-{% else %}
-    <div id="users"></div>
-    <div id="chat">
-        {% for message in messages %}
-            {{ message | raw }}
-        {% endfor %}
+</div>
+{% if isLoggedIn %}
+    <div class="row">
+        <div class="col-xs-2">
+            <ul id="users" class="list-group"></ul>
+        </div>
+        <div id="chat" class="col-xs-10" style="overflow-x: auto; height: 75vh;">
+            {% for message in messages %}
+                {{ message | raw }}
+            {% endfor %}
+        </div>
     </div>
-    <div><span id="private" style="display: none;">To: <span id="privateTo" data-uid=""></span> <span id="privateCancel">X</span> </span><input type="text" id="input"> <button id="submit">&rarr;</button></div>
-
+    <div class="row">
+        <div class="col-xs-2" style="margin-top: 10px;">
+            <span id="private" style="display: none;"><span id="privateTo" data-uid=""></span> <button class="btn btn-default" id="privateCancel"><span class="glyphicon glyphicon-remove"></span></button></span>
+        </div>
+        <div class="col-xs-8">
+            <textarea class="form-control" type="text" id="input"></textarea>
+        </div>
+        <div class="col-xs-2" style="margin-top: 10px;"><button class="btn btn-large" id="submit">Send <span class="glyphicon glyphicon-send"></span></button></div>
+    </div>
     {{ clank_client() }}
     <script type="text/javascript">
+        jQuery.fn.scrollTo = function(elem) {
+            $(this).scrollTop($(this).scrollTop() - $(this).offset().top + $(elem).offset().top);
+            return this;
+        };
 
         var chat = Clank.connect("ws://{{ host }}:8080");
 
         chat.on('socket/connect', function(session){
-
+            chat.session = session;
             session.subscribe('chat', function(uri, payload){
                 //console.log('Received:', payload);
 
                 switch (payload.action) {
                     case 'messagePrivate':
                     case 'messageNew':
-                        $('#chat').append(payload.params.message);
+                        $message = $(payload.params.message);
+                        $chat = $('#chat');
+                        $chat.append($message);
+                        $chat.scrollTo($message);
                         break;
 
                     case 'userList':
@@ -44,50 +60,59 @@
             });
 
             session.publish('chat', {action: 'userList'});
-
-            var sendFunction = function () {
-                $input = $('#input');
-                $privateTo = $('#privateTo');
-                if ($input.val()) {
-                    if ($privateTo.data('uid')) {
-                        session.publish('chat', {action: 'messagePrivate', params: { message: $input.val(), receiver: $privateTo.data('uid') } });
-                        $privateTo.text('');
-                        $privateTo.data('uid', '');
-                        $('#private').hide();
-                    } else {
-                        session.publish('chat', {action: 'messageNew', params: { message: $input.val() } });
-                    }
-                    $input.val('');
-                }
-            }
-
-            $('#submit').click(sendFunction);
-            $('#input').keypress(function(event) {
-                if (event.which == 13) {
-                    event.preventDefault();
-                    sendFunction();
-                }
-            });
-
-            $('#users').on('click', '.uid', function () {
-                $this = $(this);
-                $('#private').show();
-                $privateTo = $('#privateTo');
-                $privateTo.text($this.text());
-                $privateTo.data('uid', $this.data('uid'));
-            });
-
-            $('#privateCancel').click(function () {
-                $privateTo = $('#privateTo');
-                $privateTo.text('');
-                $privateTo.data('uid', '');
-                $('#private').hide();
-            });
         });
 
+        var sendFunction = function () {
+            $input = $('#input');
+            $privateTo = $('#privateTo');
+            if ($input.val()) {
+                if ($privateTo.data('uid')) {
+                    chat.session.publish('chat', {action: 'messagePrivate', params: { message: $input.val(), receiver: $privateTo.data('uid') } });
+                    $privateTo.text('');
+                    $privateTo.data('uid', '');
+                    $('#private').hide();
+                } else {
+                    chat.session.publish('chat', {action: 'messageNew', params: { message: $input.val() } });
+                }
+                $input.val('');
+            }
+        }
+
+        $('#submit').click(sendFunction);
+        $('#input').keypress(function(event) {
+            if (event.which == 13 && event.shiftKey == false) {
+                event.preventDefault();
+                sendFunction();
+            }
+        });
+
+        $('#users').on('click', '.uid', function () {
+            $this = $(this);
+            $('#private').show();
+            $privateTo = $('#privateTo');
+            $privateTo.text($this.text());
+            $privateTo.data('uid', $this.data('uid'));
+        });
+
+        $('#privateCancel').click(function () {
+            $privateTo = $('#privateTo');
+            $privateTo.text('');
+            $privateTo.data('uid', '');
+            $('#private').hide();
+        });
+
+        $('#chat').scrollTo($('#chat .row:last-child'));
+
+        setInterval(function () {
+            $.get('{{ path('app_default_ping') }}');
+        }, 10*60*1000);
+
         chat.on("socket/disconnect", function(error){
+            alert('Disconnected!');
+            location = location;
             //console.log("Disconnected for " + error.reason + " with code " + error.code);
         });
 
     </script>
 {% endif %}
+<div class="row">

@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/chat")
+     * @Route("/chat/")
      * @Template("AppBundle:Default:chat.html.twig")
      */
     public function chatAction(Request $request)
@@ -45,5 +45,14 @@ class DefaultController extends Controller
             'host' => $request->getHost(),
             'messages' => $messages,
         );
+    }
+
+    /**
+     * @Route("/ping/")
+     * @Template("AppBundle:Default:empty.html.twig")
+     */
+    public function pingAction()
+    {
+        return array();
     }
 }

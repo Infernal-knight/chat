@@ -14,6 +14,7 @@ class MessageProcessorService extends ContainerAware
         $message = strip_tags($message);
         $message = $this->urlify($message);
         $message = $this->container->get('markdown.parser')->transformMarkdown($message);
+        $message = str_replace(PHP_EOL, '</p><p>', $message);
         //removing paragraphs after markdown
         //$message = str_replace(array('<p>','</p>'),'',$message);
         return $message;
