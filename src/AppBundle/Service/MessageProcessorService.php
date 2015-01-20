@@ -8,15 +8,24 @@ class MessageProcessorService extends ContainerAware
 {
     protected static $IMG_EXTS = array('gif', 'jpg', 'jpeg', 'png');
 
+    protected $parser;
 
-    public function process($message) {
+    public function __construct()
+    {
+        $this->parser = new \Netcarver\Textile\Parser();
+        $this->parser
+            ->setRestricted(true)
+            ->setLite(true)
+            ->setImages(false)
+        ;
+    }
 
-        $message = strip_tags($message);
+
+    public function process($message)
+    {
+        $message = $this->parser->parse($message);
         $message = $this->urlify($message);
-        $message = $this->container->get('markdown.parser')->transformMarkdown($message);
-        $message = str_replace(PHP_EOL, '</p><p>', $message);
-        //removing paragraphs after markdown
-        //$message = str_replace(array('<p>','</p>'),'',$message);
+
         return $message;
     }
 

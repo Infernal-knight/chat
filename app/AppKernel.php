@@ -44,7 +44,6 @@ class AppKernel extends Kernel
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
 
             new JDare\ClankBundle\JDareClankBundle(),
-            new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
             new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
 
             new AppBundle\AppBundle(),

@@ -31,9 +31,6 @@ services:
     app.decorator.chat:
         class: AppBundle\Service\ChatDecoratorService
 
-    app.markdown.parser:
-        class: AppBundle\Service\MarkdownParserService
-
     app.form.type.profile:
         class: AppBundle\Form\Type\ProfileType
         arguments: [%fos_user.model.user.class%]
