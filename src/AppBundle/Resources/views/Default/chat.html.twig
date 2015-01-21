@@ -1,16 +1,19 @@
-</div>
+
 {% if isLoggedIn %}
-    <div class="row">
-        <div class="col-xs-2">
+    <div class="chat-content row">
+        <div id="user-sidebar" class="column col-sm-2 col-xs-12 hidden-xs show-users ">
             <ul id="users" class="list-group"></ul>
         </div>
-        <div id="chat" class="col-xs-10" style="overflow-x: auto; height: 75vh;">
+        <button style="position:absolute; right:20px; z-index: 100;" class="visible-xs-block hidden-lg hidden-md hidden-sm" data-toggle="collapse" aria-expanded="false" data-target="#user-sidebar">
+            USERS
+        </button>
+        <div id="chat" class="column col-sm-10 col-xs-12 ">
             {% for message in messages %}
                 {{ message | raw }}
             {% endfor %}
         </div>
     </div>
-    <div class="row">
+    <div class="col-lg-12 footer-message">
         <div class="col-xs-2" style="margin-top: 10px;">
             <span id="private" style="display: none;"><span id="privateTo" data-uid=""></span> <button class="btn btn-default" id="privateCancel"><span class="glyphicon glyphicon-remove"></span></button></span>
         </div>
@@ -19,100 +22,4 @@
         </div>
         <div class="col-xs-2" style="margin-top: 10px;"><button class="btn btn-large" id="submit">Send <span class="glyphicon glyphicon-send"></span></button></div>
     </div>
-    {{ clank_client() }}
-    <script type="text/javascript">
-        jQuery.fn.scrollTo = function(elem) {
-            $(this).scrollTop($(this).scrollTop() - $(this).offset().top + $(elem).offset().top);
-            return this;
-        };
-
-        var chat = Clank.connect("ws://{{ host }}:8080");
-
-        chat.on('socket/connect', function(session){
-            chat.session = session;
-            session.subscribe('chat', function(uri, payload){
-                //console.log('Received:', payload);
-
-                switch (payload.action) {
-                    case 'messagePrivate':
-                    case 'messageNew':
-                        $message = $(payload.params.message);
-                        $chat = $('#chat');
-                        $chat.append($message);
-                        $chat.scrollTo($message);
-                        break;
-
-                    case 'userList':
-                        $('#users').html(payload.params.userList);
-                        break;
-
-                    case 'userAdd':
-                        $('#users').append(payload.params.user);
-                        break;
-
-                    case 'userRemove':
-                        $($("[data-uid='" + payload.params.userId + "']")[0]).remove();
-                        break;
-
-                    default:
-                        break;
-                }
-            });
-
-            session.publish('chat', {action: 'userList'});
-        });
-
-        var sendFunction = function () {
-            $input = $('#input');
-            $privateTo = $('#privateTo');
-            if ($input.val()) {
-                if ($privateTo.data('uid')) {
-                    chat.session.publish('chat', {action: 'messagePrivate', params: { message: $input.val(), receiver: $privateTo.data('uid') } });
-                    $privateTo.text('');
-                    $privateTo.data('uid', '');
-                    $('#private').hide();
-                } else {
-                    chat.session.publish('chat', {action: 'messageNew', params: { message: $input.val() } });
-                }
-                $input.val('');
-            }
-        }
-
-        $('#submit').click(sendFunction);
-        $('#input').keypress(function(event) {
-            if (event.which == 13 && event.shiftKey == false) {
-                event.preventDefault();
-                sendFunction();
-            }
-        });
-
-        $('#users').on('click', '.uid', function () {
-            $this = $(this);
-            $('#private').show();
-            $privateTo = $('#privateTo');
-            $privateTo.text($this.text());
-            $privateTo.data('uid', $this.data('uid'));
-        });
-
-        $('#privateCancel').click(function () {
-            $privateTo = $('#privateTo');
-            $privateTo.text('');
-            $privateTo.data('uid', '');
-            $('#private').hide();
-        });
-
-        $('#chat').scrollTo($('#chat .row:last-child'));
-
-        setInterval(function () {
-            $.get('{{ path('app_default_ping') }}');
-        }, 10*60*1000);
-
-        chat.on("socket/disconnect", function(error){
-            alert('Disconnected!');
-            location = location;
-            //console.log("Disconnected for " + error.reason + " with code " + error.code);
-        });
-
-    </script>
 {% endif %}
-<div class="row">

@@ -10,16 +10,28 @@ file that was distributed with this source code.
 #}
 {% extends 'SonataPageBundle::base_layout.html.twig' %}
 
+{% block sonata_page_stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/chat.css') }}" type="text/css" media="all"  />
+{% endblock %}
+
+{% block sonata_page_javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/app/js/lazyload.js') }}" type="text/javascript"></script>
+    <script type="text/javascript">
+        var chat_url = "ws://{{ app.request.host }}:8080";
+        setInterval(function () {
+            $.get('{{ path('app_default_ping') }}');
+        }, 10*60*1000);
+    </script>
+    {{ clank_client() }}
+    <script src="{{ asset('bundles/app/js/chat.js') }}" type="text/javascript"></script>
+
+{% endblock %}
+
 {% block sonata_page_container %}
-    <style type="text/css">
-        .navbar {
-            margin-bottom: 0;
-        }
-        .message {
-            border-bottom: 1px dotted lightgrey;
-        }
-    </style>
-    <nav class="navbar navbar-default">
+
+    <nav class="navbar navbar-default main-navbar">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -39,9 +51,9 @@ file that was distributed with this source code.
         </div><!-- /.container-fluid -->
     </nav>
 
-    <div class="container" style="overflow: hidden; height: 90vh;">
-        <div class="content" style="height: 90vh;">
-            <div class="row">
+    <div class="wrapper">
+        <div class="box">
+
                 {% block page_content %}
                     {% if content is defined %}
                         {{ content|raw }}
@@ -54,7 +66,7 @@ file that was distributed with this source code.
                         {% endif %}
                     {% endif %}
                 {% endblock %}
-            </div>
+
         </div>
     </div>
 {% endblock %}
